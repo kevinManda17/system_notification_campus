@@ -2,27 +2,29 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Notification
 
+# --- User Admin ---
 class UserAdmin(BaseUserAdmin):
-    # Utiliser des méthodes pour exposer descripteurs
+    # Affichage dans la liste
     list_display = ('username', 'email', 'get_email_perso', 'get_phone', 'get_priority', 'is_staff', 'is_active')
-    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'priority_db')  # filtrer sur champ réel
-
+    list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups', 'priority_db')
     search_fields = ('username', 'email', 'email_perso_db', 'phone_db')
     ordering = ('username',)
 
+    # Formulaire d’édition
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         ('Informations personnelles', {
-            'fields': ('first_name', 'last_name', 'email', 'email_perso', 'phone', 'bio', 'priority', 'time_window')
+            'fields': ('first_name', 'last_name', 'email', 'email_perso_db', 'phone_db', 'bio', 'priority_db', 'time_window_start', 'time_window_end')
         }),
         ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         ('Dates importantes', {'fields': ('last_login', 'date_joined')}),
     )
 
+    # Formulaire d’ajout
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'email_perso', 'phone', 'password1', 'password2', 'is_staff', 'is_active')}
+            'fields': ('username', 'email', 'email_perso_db', 'phone_db', 'password1', 'password2', 'is_staff', 'is_active')}
         ),
     )
 
@@ -39,13 +41,16 @@ class UserAdmin(BaseUserAdmin):
         return obj.priority
     get_priority.short_description = 'Priorité'
 
-# Admin Notification
+    # Pour rendre les descripteurs en lecture seule dans l'admin
+    readonly_fields = ('get_email_perso', 'get_phone', 'get_priority')
+
+# --- Notification Admin ---
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('id', 'destinataire', 'message', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('destinataire__username', 'message')
     ordering = ('-created_at',)
 
-# Enregistrement
+# --- Enregistrement ---
 admin.site.register(User, UserAdmin)
 admin.site.register(Notification, NotificationAdmin)
