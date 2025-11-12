@@ -8,9 +8,6 @@ class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
     def create_user(self, username, email=None, password=None, **extra_fields):
-        """
-        Crée et sauvegarde un utilisateur normal.
-        """
         if not username:
             raise ValueError('Le username doit être défini')
         email = self.normalize_email(email)
@@ -20,10 +17,6 @@ class CustomUserManager(BaseUserManager):
         return user
 
     def create_superuser(self, username, email=None, password=None, **extra_fields):
-        """
-        Crée et sauvegarde un superuser.
-        Remplit automatiquement les champs personnalisés obligatoires.
-        """
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
 
@@ -42,12 +35,6 @@ class CustomUserManager(BaseUserManager):
 
 # Custom User
 class User(AbstractUser):
-    """
-    Modèle utilisateur étendu basé sur AbstractUser :
-    - Champs ORM pour stockage réel
-    - Descripteurs pour validation / logique métier
-    """
-
     # Champs ORM pour base
     phone_db = models.CharField(max_length=20, default='+0000000000', blank=True)
     email_perso_db = models.EmailField(default='perso@domaine.com', blank=True)

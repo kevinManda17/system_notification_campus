@@ -26,10 +26,6 @@ def add_performance_tracking(cls):
 
 # Décorateur classe - validation configuration
 def auto_configuration_validation(cls):
-    """
-    Valide que toutes les instances auront les attributs requis.
-    Au lieu de vérifier à la création de la classe, on injecte une vérification dans __init__.
-    """
     original_init = cls.__init__
 
     def new_init(self, *args, **kwargs):
@@ -72,10 +68,6 @@ from .descriptors import TimeWindowDescriptor
 
 # Décorateur de méthode simple
 def message(func):
-    """
-    Décorateur de méthode classique.
-    Trace les appels avant et après exécution.
-    """
     def wrapper(self, *args, **kwargs):
         print(f"[Message] → Appel de {func.__name__}()")
         result = func(self, *args, **kwargs)
@@ -87,10 +79,6 @@ def message(func):
 
 # Décorateurs de classes orientés POO
 class AddPerformanceTracking:
-    """
-    Décorateur de classe mesurant les performances de la méthode principale 'evacuer'.
-    Utilise le TimeWindowDescriptor pour tracer la durée d’exécution.
-    """
     def __call__(self, cls):
         if hasattr(cls, "evacuer"):
             original = cls.evacuer
@@ -115,9 +103,6 @@ class AddPerformanceTracking:
 
 
 class AutoConfigurationValidation:
-    """
-    Vérifie que toutes les propriétés requises existent dans la classe.
-    """
     def __call__(self, cls):
         original_init = cls.__init__
 
@@ -132,9 +117,6 @@ class AutoConfigurationValidation:
 
 
 class RegisterInGlobalRegistry:
-    """
-    Enregistre automatiquement les classes décorées dans un registre global.
-    """
     registry = {}
 
     def __call__(self, cls):
@@ -144,9 +126,6 @@ class RegisterInGlobalRegistry:
 
 
 class AddCircuitBreaker:
-    """
-    Décorateur de classe gérant les exceptions pour éviter la panne totale du système.
-    """
     def __call__(self, cls):
         if hasattr(cls, "evacuer"):
             original = cls.evacuer

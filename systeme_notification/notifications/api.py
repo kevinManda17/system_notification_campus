@@ -5,16 +5,12 @@ from .models import Notification
 from .serializers import NotificationSerializer
 from .core import Epidemie, Incendie, Innondation, Securite
 
-# ------------------------------
 # ViewSet pour les notifications
-# ------------------------------
 class NotificationViewSet(viewsets.ModelViewSet):
     queryset = Notification.objects.all()
     serializer_class = NotificationSerializer
 
-# ------------------------------
 # APIViews pour les urgences
-# ------------------------------
 class EpidemieAPIView(APIView):
     def get(self, request):
         return Response({"message": "Évacuation Épidémie prête à être déclenchée"})

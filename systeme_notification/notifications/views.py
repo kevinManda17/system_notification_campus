@@ -4,10 +4,6 @@ from rest_framework.response import Response
 from .core import Epidemie, Incendie, Innondation, Securite
 
 class EvacuationViewSet(viewsets.ViewSet):
-    """
-    Centralized ViewSet handling all evacuation types (epidemie, incendie, etc.)
-    """
-
     # GET /api/evacuation/epidemie/
     @action(detail=False, methods=["get"])
     def epidemie(self, request):
