@@ -6,7 +6,6 @@ from .descriptors import EmailDescriptor, PhoneDescriptor
 
 # ------------------------------
 # Custom User Manager
-# ------------------------------
 class CustomUserManager(BaseUserManager):
     use_in_migrations = True
 
