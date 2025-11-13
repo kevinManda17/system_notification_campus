@@ -1,15 +1,11 @@
 import time
 from datetime import datetime
 from .descriptors import TimeWindowDescriptor
-from .registry import GlobalRegistry
+from .registry import GlobalRegistry  
 
-
-# Décorateur de méthode simple
+# Décorateur de méthode
 def message(func):
-    """
-    Décorateur de méthode classique.
-    Trace les appels avant et après exécution.
-    """
+    """Trace les appels de méthode avant et après exécution."""
     def wrapper(self, *args, **kwargs):
         print(f"[Message] → Appel de {func.__name__}()")
         result = func(self, *args, **kwargs)
@@ -18,12 +14,10 @@ def message(func):
     return wrapper
 
 
-# Décorateurs de classes orientés POO
+
+# Décorateurs de classes
 class AddPerformanceTracking:
-    """
-    Décorateur de classe mesurant les performances de la méthode principale 'evacuer'.
-    Utilise le TimeWindowDescriptor pour tracer la durée d’exécution.
-    """
+    """Mesure les performances de la méthode evacuer()."""
     def __call__(self, cls):
         if hasattr(cls, "evacuer"):
             original = cls.evacuer
@@ -31,16 +25,12 @@ class AddPerformanceTracking:
             def tracked(self, *args, **kwargs):
                 start = time.time()
                 start_time = datetime.now()
-
-                print(f"[Performance]  Début {cls.__name__}.evacuer à {start_time.strftime('%H:%M:%S')}")
+                print(f"[Performance] Début {cls.__name__}.evacuer à {start_time.strftime('%H:%M:%S')}")
                 result = original(self, *args, **kwargs)
                 end = time.time()
                 end_time = datetime.now()
-
-                # Injection dynamique de la fenêtre temporelle dans l'instance
                 self.time_window = (start_time, end_time)
-
-                print(f"[Performance]  Fin {cls.__name__}.evacuer ({end - start:.3f}s)")
+                print(f"[Performance] Fin {cls.__name__}.evacuer ({end - start:.3f}s)")
                 return result
 
             cls.evacuer = tracked
@@ -48,9 +38,7 @@ class AddPerformanceTracking:
 
 
 class AutoConfigurationValidation:
-    """
-    Vérifie que toutes les propriétés requises existent dans la classe.
-    """
+    """Valide les attributs requis à l’instanciation."""
     def __call__(self, cls):
         original_init = cls.__init__
 
@@ -65,20 +53,15 @@ class AutoConfigurationValidation:
 
 
 class RegisterInGlobalRegistry:
-    """
-    Enregistre automatiquement les classes décorées dans un registre global.
-    """
+    """Enregistre la classe décorée dans le registre global."""
     def __call__(self, cls):
-        GlobalRegistry.register(cls.__name__, cls)
+        GlobalRegistry.register(cls.__name__, cls) 
         print(f"[Registry] Classe enregistrée : {cls.__name__}")
         return cls
 
 
-
 class AddCircuitBreaker:
-    """
-    Décorateur de classe gérant les exceptions pour éviter la panne totale du système.
-    """
+    """Empêche les pannes critiques lors d'erreurs dans evacuer()."""
     def __call__(self, cls):
         if hasattr(cls, "evacuer"):
             original = cls.evacuer
