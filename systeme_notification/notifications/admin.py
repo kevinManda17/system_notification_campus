@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from .models import User, Notification , Group
 
-# --- User Admin ---
+# User Admin
 class UserAdmin(BaseUserAdmin):
     # Affichage dans la liste
     list_display = ('username', 'email', 'get_email_perso', 'get_phone', 'is_staff', 'is_active')
@@ -28,7 +28,7 @@ class UserAdmin(BaseUserAdmin):
         ),
     )
 
-    # --- Méthodes pour exposer les descripteurs ---
+    # Méthodes pour exposer les descripteurs
     def get_email_perso(self, obj):
         return obj.email_perso
     get_email_perso.short_description = 'Email perso'
@@ -38,14 +38,14 @@ class UserAdmin(BaseUserAdmin):
     get_phone.short_description = 'Téléphone'
 
 
-# --- Notification Admin ---
+# Notification Admin
 class NotificationAdmin(admin.ModelAdmin):
     list_display = ('id', 'destinataire', 'message', 'created_at')
     list_filter = ('created_at',)
     search_fields = ('destinataire__username', 'message')
     ordering = ('-created_at',)
 
-# --- Enregistrement ---
+# Enregistrement
 admin.site.register(User, UserAdmin)
 admin.site.register(Notification, NotificationAdmin)
 admin.site.unregister(Group)
