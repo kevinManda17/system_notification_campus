@@ -19,14 +19,14 @@ class PhoneDescriptor:
         instance.__dict__['phone'] = value
 
 class PriorityDescriptor:
-    def __init__(self, default='LOW'):
+    def __init__(self, default='faible'):
         self.default = default
 
     def __get__(self, instance, owner):
         return instance.__dict__.get('priority', self.default)
 
     def __set__(self, instance, value):
-        if value not in ['LOW', 'MEDIUM', 'HIGH', 'URGENT']:
+        if value not in ['faible', 'moyenne', 'élevée', 'urgente']:
             raise ValueError(f"Priorité invalide: {value}")
         instance.__dict__['priority'] = value
 

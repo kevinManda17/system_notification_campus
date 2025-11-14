@@ -91,7 +91,7 @@ class Notification(models.Model):
     destinataire = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     # Champs hérités automatiquement depuis l’utilisateur
-    priority = models.CharField(max_length=10, default='LOW')
+    priority = models.CharField(max_length=10, default='faible')
     time_window_start = models.DateTimeField(null=True, blank=True)
     time_window_end = models.DateTimeField(null=True, blank=True)
 
@@ -100,7 +100,7 @@ class Notification(models.Model):
     def save(self, *args, **kwargs):
         if self.destinataire:
             # Copier priority et time_window depuis l'utilisateur
-            self.priority = getattr(self.destinataire, 'priority', 'LOW')
+            self.priority = getattr(self.destinataire, 'priority', 'faible')
             self.time_window_start = self.destinataire.time_window_start
             self.time_window_end = self.destinataire.time_window_end
         super().save(*args, **kwargs)
