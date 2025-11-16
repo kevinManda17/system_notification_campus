@@ -215,9 +215,11 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>🔔 Dashboard Utilisateur</h1>
+            <h1>Dashboard Utilisateur</h1>
             <div class="user-info">
                 <strong>Bienvenue, {{ user.username }}!</strong> | {{ user.email }}
+                <!-- Bouton de déconnexion accessible depuis le tableau de bord utilisateur -->
+                <a href="{% url 'login' %}" class="logout-btn">Déconnexion</a>
             </div>
         </div>
         
@@ -240,7 +242,6 @@
             <div class="notifications-header">
                 <h2>Mes Notifications</h2>
                 <div>
-                    <button class="refresh-btn" onclick="location.reload()">🔄 Actualiser</button>
                 </div>
             </div>
             
@@ -259,7 +260,7 @@
                     {% endfor %}
                 {% else %}
                     <div class="no-notifications">
-                        📭 Aucune notification pour le moment
+                        Aucune notification pour le moment
                     </div>
                 {% endif %}
             </div>

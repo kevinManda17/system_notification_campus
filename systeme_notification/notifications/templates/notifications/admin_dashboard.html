@@ -189,6 +189,31 @@
             font-weight: 600;
             transition: transform 0.3s;
         }
+
+        /* Boutons supplémentaires dans l'en-tête */
+        .admin-btn,
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            margin-left: 10px;
+            transition: transform 0.3s, background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .admin-btn {
+            background: #17a2b8;
+        }
+        .logout-btn:hover,
+        .admin-btn:hover {
+            transform: scale(1.05);
+            background: #c82333;
+        }
         
         .refresh-btn:hover {
             transform: scale(1.05);
@@ -199,35 +224,38 @@
     <div class="container">
         <div class="header">
             <div>
-                <h1>📊 Dashboard Administrateur</h1>
+                <h1>Dashboard Administrateur</h1>
                 <p style="color: #999; margin-top: 5px;">Système de Notifications Campus</p>
             </div>
             <div class="header-info">
-                <button class="refresh-btn" onclick="location.reload()">🔄 Actualiser</button>
+                <a href="{% url 'admin:index' %}" class="admin-btn">Espace Admin Django</a>
+                <a href="{% url 'api-schema' %}" class="admin-btn">Schema de l'API</a>
+                <a href="{% url 'broadcast_notifications' %}" class="admin-btn">Diffuser Urgence Auto</a>
+                <a href="{% url 'login' %}" class="logout-btn">Déconnexion</a>
             </div>
         </div>
         
         <div class="stats-grid">
             <div class="stat-card">
-                <h3>👥 Total Utilisateurs</h3>
+                <h3>Total Utilisateurs</h3>
                 <div class="number">{{ total_users }}</div>
                 <div class="subtitle">Utilisateurs enregistrés</div>
             </div>
             
             <div class="stat-card">
-                <h3>📢 Total Notifications</h3>
+                <h3>Total Notifications</h3>
                 <div class="number">{{ total_notifications }}</div>
                 <div class="subtitle">Toutes périodes confondues</div>
             </div>
             
             <div class="stat-card">
-                <h3>📅 Dernières 24h</h3>
+                <h3>Dernières 24h</h3>
                 <div class="number">{{ notifs_24h }}</div>
                 <div class="subtitle">Notifications envoyées</div>
             </div>
             
             <div class="stat-card">
-                <h3>📆 7 Derniers jours</h3>
+                <h3>7 Derniers jours</h3>
                 <div class="number">{{ notifs_7d }}</div>
                 <div class="subtitle">Notifications envoyées</div>
             </div>
@@ -235,19 +263,19 @@
         
         <div class="charts-container">
             <div class="chart-card">
-                <h2>📈 Notifications par Priorité</h2>
+                <h2>Notifications par Priorité</h2>
                 <canvas id="priorityChart"></canvas>
             </div>
             
             <div class="chart-card">
-                <h2>📊 Distribution (7 derniers jours)</h2>
+                <h2>Distribution (7 derniers jours)</h2>
                 <canvas id="dailyChart"></canvas>
             </div>
         </div>
         
         <div class="tables-container">
             <div class="table-card">
-                <h2>👑 Top 5 Utilisateurs</h2>
+                <h2>Top 5 Utilisateurs</h2>
                 <table>
                     <thead>
                         <tr>
@@ -269,7 +297,7 @@
             </div>
             
             <div class="table-card">
-                <h2>🕐 Notifications Récentes</h2>
+                <h2>Notifications Récentes</h2>
                 <table>
                     <thead>
                         <tr>
@@ -289,6 +317,26 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <!-- Formulaire d'envoi de notification à tous les utilisateurs -->
+        <div class="table-card" style="margin-top: 30px;">
+            <h2>Envoyer une notification à tous les utilisateurs</h2>
+            <form action="{% url 'broadcast_notifications' %}" method="post" style="margin-top: 15px;">
+                {% csrf_token %}
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <label for="broadcast-message" style="font-weight: 600; color: #333;">Message&nbsp;:</label>
+                    <textarea id="broadcast-message" name="message" rows="3" style="padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em; resize: vertical;"></textarea>
+                    <label for="broadcast-priority" style="font-weight: 600; color: #333;">Priorité&nbsp;:</label>
+                    <select id="broadcast-priority" name="priority" style="padding: 12px; border-radius: 8px; border: 1px solid #ccc; font-size: 1em;">
+                        <option value="faible">Faible</option>
+                        <option value="moyenne">Moyenne</option>
+                        <option value="haute">Haute</option>
+                        <option value="urgente">Urgente</option>
+                    </select>
+                    <button type="submit" class="refresh-btn" style="align-self: flex-start;">Envoyer</button>
+                </div>
+            </form>
         </div>
     </div>
     
