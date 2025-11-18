@@ -1,5 +1,9 @@
 import os 
 from pathlib import Path
+from dotenv import load_dotenv  
+
+load_dotenv()
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -12,7 +16,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-aq^gq8!)ot29+e*#m--q2*8%f+6rsfo@sj&575vfpjftbvc5--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback_secret_key')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+
 
 ALLOWED_HOSTS = []
 
@@ -79,6 +85,19 @@ DATABASES = {
         'NAME': BASE_DIR / 'notifsysdb.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': "notifsysdb",
+#         'USER': "kevin_manda",
+#         'PASSWORD': "kevin!@#123",
+#         'HOST': "localhost",
+#         'PORT': "5432",
+#     }
+# }
+
 
 
 # Password validation

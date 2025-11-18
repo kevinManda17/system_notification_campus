@@ -81,7 +81,7 @@ class User(AbstractUser):
         if phone_val:
             self.phone = phone_val
         if priority_val:
-            # Le descripteur ``priority`` s'assure que la valeur est valide
+            # Le descripteur 
             self.priority = priority_val
         if time_window_val:
             # Affecte la fenêtre temporelle si fournie lors de l'instanciation
@@ -124,7 +124,6 @@ class Notification(models.Model):
             default_priority = self.__class__._meta.get_field('priority').default
             if self.priority is None or self.priority == '' or self.priority == default_priority:
                 self.priority = getattr(self.destinataire, 'priority', default_priority)
-            # Copier la fenêtre temporelle depuis l'utilisateur
             self.time_window_start = self.destinataire.time_window_start
             self.time_window_end = self.destinataire.time_window_end
         super().save(*args, **kwargs)

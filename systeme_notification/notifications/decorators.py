@@ -7,9 +7,9 @@ global_registry: dict[str, Type[Any]] = {}
 
 def message(func: Callable) -> Callable:
     def wrapper(self, *args, **kwargs):
-        print(f"[Message] → Appel de {func.__name__}()")
+        print(f"[Message] --> Appel de {func.__name__}()")
         result = func(self, *args, **kwargs)
-        print(f"[Message] ← Fin de {func.__name__}() → {result}")
+        print(f"[Message] <-- Fin de {func.__name__}() --> {result}")
         return result
     return wrapper
 
