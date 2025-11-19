@@ -1,30 +1,30 @@
-import os 
+import os
 from pathlib import Path
-from dotenv import load_dotenv  
+from dotenv import load_dotenv
+import dj_database_url
 
 load_dotenv()
 
-
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# ---------------------------
+# Security
+# ---------------------------
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
+SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'insecure_dev_key')
 
-# SECURITY WARNING: keep the secret key used in production secret!
+DEBUG = os.getenv('DJANGO_DEBUG', 'False') == 'True'
 
+ALLOWED_HOSTS = [
+    "systemnotif.com",
+    "www.systemnotif.com",
+    "localhost",
+    "127.0.0.1",
+]
 
-# SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback_secret_key')
-# DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
-
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
-
-ALLOWED_HOSTS = ["systemnotif.com", "www.systemnotif.com", "localhost", "127.0.0.1"]
-
-
+# ---------------------------
 # Application definition
+# ---------------------------
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,26 +33,28 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'rest_framework',
     'notifications',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+
+    # Pour servir correctement les fichiers statiques en prod
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-
-
-
-INSTALLED_APPS += ['corsheaders']
-MIDDLEWARE = ['corsheaders.middleware.CorsMiddleware'] + MIDDLEWARE
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
@@ -77,31 +79,31 @@ TEMPLATES = [
 WSGI_APPLICATION = 'systeme_notification.wsgi.application'
 
 
+# ---------------------------
 # Database
-# https://docs.djangoproject.com/en/5.2/ref/settings/#databases
+# ---------------------------
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'notifsysdb.sqlite3',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB'),
-        'USER': os.environ.get('POSTGRES_USER'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'db'),
-        'PORT': os.environ.get('POSTGRES_PORT', 5432),
+if os.getenv("RENDER", "") == "TRUE":
+    # DATABASE Render (auto)
+    DATABASES = {
+        "default": dj_database_url.parse(os.environ["DATABASE_URL"])
     }
-}
+else:
+    # DATABASE Local Docker PostgreSQL
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.environ.get('POSTGRES_DB'),
+            'USER': os.environ.get('POSTGRES_USER'),
+            'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+            'HOST': os.environ.get('POSTGRES_HOST', 'db'),
+            'PORT': os.environ.get('POSTGRES_PORT', 5432),
+        }
+    }
 
-
-
-# Password validation
-# https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
+# ---------------------------
+# Password Validators
+# ---------------------------
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -118,40 +120,36 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
+# ---------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/5.2/topics/i18n/
+# ---------------------------
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
+# ---------------------------
+# Static files
+# ---------------------------
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/5.2/howto/static-files/
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATIC_URL = 'static/'
+# Whitenoise pour servir les statiques en production
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+# ---------------------------
+# Custom User Model
+# ---------------------------
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'notifications.User'
 
 # ---------------------------
-# Authentification / Sessions
+# Authentication redirects
 # ---------------------------
-# Par défaut, Django redirige les requêtes non authentifiées vers
-# ``/accounts/login/``. Comme l'application fournit sa propre page de
-# connexion, on redéfinit les paramètres d'authentification pour utiliser
-# cette page dédiée. ``LOGIN_REDIRECT_URL`` permet de renvoyer
-# automatiquement l'utilisateur vers son tableau de bord après une
-# connexion réussie, et ``LOGOUT_REDIRECT_URL`` l'envoie vers la page de
-# connexion après déconnexion.
+
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/login/'
