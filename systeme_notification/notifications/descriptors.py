@@ -9,18 +9,6 @@ class EmailDescriptor:
             raise ValueError(f"Email invalide: {value}")
         instance.__dict__['email'] = value
 
-# class PhoneDescriptor:
-#     def __get__(self, instance, owner):
-#         if instance is None:
-#             return self
-#         return instance.__dict__.get('phone', instance.phone_db or '+0000000000')
-
-#     def __set__(self, instance, value):
-#         if not re.match(r'^\+\d{10,15}$', value):
-#             raise ValueError(f"Numéro de téléphone invalide: {value}")
-#         instance.__dict__['phone'] = value
-
-
 
 class PhoneDescriptor:
     def __get__(self, instance, owner):

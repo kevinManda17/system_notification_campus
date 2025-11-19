@@ -22,3 +22,4 @@ EXPOSE 8000
 
 #production 
 CMD ["gunicorn", "systeme_notification.wsgi:application", "--bind", "0.0.0.0:8000"]
+

@@ -1,50 +1,35 @@
-# docker-compose-prod.yml
+# version: "3.8"
+
 services:
   db:
     image: postgres:15
     restart: always
-    env_file:
-      - .env
+    env_file: .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - prodnet
 
   web:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile
     restart: always
-    env_file:
-      - .env
-    volumes:
-      - .:/app:ro     # lecture seule dans prod; si tu veux pouvoir collectstatic, garder rw ou utiliser run command
-      - static_data:/app/staticfiles
+    env_file: .env
+    command: gunicorn systeme_notification.wsgi:application --bind 0.0.0.0:8000
     depends_on:
       - db
-    networks:
-      - prodnet
 
   nginx:
-    image: nginx:stable
+    image: nginx:latest
     restart: always
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      - static_data:/app/staticfiles:ro
-      - ./webroot:/var/www/certbot:rw     # utilisé pour Let's Encrypt webroot
-      - ./certs:/etc/letsencrypt:rw
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./webroot:/webroot
+      - ./certs:/certs
     depends_on:
       - web
-    networks:
-      - prodnet
 
 volumes:
   postgres_data:
-  static_data:
-  certs:
-
-networks:
-  prodnet:
