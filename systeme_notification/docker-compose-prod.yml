@@ -1,0 +1,50 @@
+# docker-compose-prod.yml
+services:
+  db:
+    image: postgres:15
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - prodnet
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    restart: always
+    env_file:
+      - .env
+    volumes:
+      - .:/app:ro     # lecture seule dans prod; si tu veux pouvoir collectstatic, garder rw ou utiliser run command
+      - static_data:/app/staticfiles
+    depends_on:
+      - db
+    networks:
+      - prodnet
+
+  nginx:
+    image: nginx:stable
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - static_data:/app/staticfiles:ro
+      - ./webroot:/var/www/certbot:rw     # utilisé pour Let's Encrypt webroot
+      - ./certs:/etc/letsencrypt:rw
+    depends_on:
+      - web
+    networks:
+      - prodnet
+
+volumes:
+  postgres_data:
+  static_data:
+  certs:
+
+networks:
+  prodnet:
