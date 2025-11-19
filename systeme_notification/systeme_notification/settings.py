@@ -16,11 +16,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-aq^gq8!)ot29+e*#m--q2*8%f+6rsfo@sj&575vfpjftbvc5--'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback_secret_key')
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+# SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'fallback_secret_key')
+# DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
 
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["systemnotif.com", "www.systemnotif.com", "localhost", "127.0.0.1"]
 
 
 # Application definition
