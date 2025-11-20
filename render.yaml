@@ -5,12 +5,9 @@ services:
     plan: free
     region: frankfurt
 
-    buildCommand: |
-      cd webapp
-      pip install -r requirements.txt
+    buildCommand: pip install -r requirements.txt
 
     startCommand: |
-      # cd webapp
       gunicorn systeme_notification.wsgi:application --bind 0.0.0.0:$PORT
 
     envVars:
