@@ -19,6 +19,8 @@ services:
         fromDatabase:
           name: systeme_notification_db
           property: connectionString
+      - key: DJANGO_SETTINGS_MODULE
+        value: systeme_notification.settings
       - key: RENDER
         value: "TRUE"
 
